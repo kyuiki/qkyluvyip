@@ -100,14 +100,15 @@ window.onload = async function () {
     })
 
     const channels = new Vue({
-        el: '#vue-channels',
+        el: '#the-main-nav',
         data: {
             channels:data_guilds.channels,
             filter:'',
             isNSFW:false,
             setting:{
                 forceCrop: false
-            }
+            },
+            isPhoneExist: !(window.innerWidth<500)
         },
         methods:{
             filterChannels: function(){
@@ -151,5 +152,23 @@ window.onload = async function () {
             }
         }
     })
-
+    const navbar = new Vue({
+        el: '#navbar',
+        data:{
+            toggleExist: false
+        },
+        methods:{
+            clickToExist: function(){
+                console.log("clicked")
+                Vue.nextTick(function(){
+                channels.isPhoneExist = this.toggleExist
+                this.toggleExist = !this.toggleExist
+                console.log(channels.isPhoneExist, this.toggleExist)
+                })
+            },
+            clickToDevour: function(){
+                phoneMoment.isExist = false
+            }
+        }
+    })
 }

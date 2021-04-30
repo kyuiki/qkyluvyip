@@ -11,13 +11,18 @@
     <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <link href="style.css" rel="stylesheet">
-    <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script>
-    <!-- <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script> -->
+    <!-- <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script> -->
+    <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script>
     <script src="script.js"></script>
 </head>
 <body>
+    <div class="navbar" id="navbar">
+        <div class="content flex">
+            <span v-on:click="clickToExist()" class="three-line">&#9776;</span> <h1>🐾 QkyLuvYip</h1>
+        </div>
+    </div>
     <div class="main">
-        <div class="layout-main">
+        <div id="the-main-nav" v-bind:class="`layout-main ${isPhoneExist?'':'hide'}`">
             <div class="the-box-gui">
                 <div class="content">
                     <h1>🐾 QkyLuvYip</h1>

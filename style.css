@@ -152,12 +152,59 @@ button.def-custom:disabled{
     background: rgba(124, 42, 42, 0.2);
     cursor:not-allowed
 }
+.flex{
+    display:flex;
+}
+.navbar {
+    position: sticky;
+    display: none;
+    top: 0px;
+    width:100%;
+    height: 60px;
+    background: #172043;
+    color: #ffffff;
+}
+.three-line{
+    display: grid;
+    align-items: center;
+    font-size: 30px;
+    margin-right: 20px;
+    cursor:pointer;
+}
+.hide{
+    display: none !important;
+}
 
 @media screen and (max-width:824px) {
     .main{
-        grid-template-columns: minmax(190px, 2fr) 4fr;
+        grid-template-columns: minmax(150px, 2fr) 4fr;
     }
     .main .layout-main:last-child{
         display:none;
     }
+}
+@media screen and (max-width:500px) {
+    .main{
+        grid-template-columns: 1fr;
+    }
+    .main #the-main-nav{
+        overflow-y:auto;
+        position: fixed;
+        height:calc( 100vh - 60px );
+        top: 60px;
+        background: rgba(20, 28, 46, 0.9);
+        -moz-backdrop-filter: blur(5px);
+        -webkit-backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px);
+        animation:0.5s swipe-left;
+        z-index:2;
+    }
+    .navbar{
+        display: block;
+        z-index: 999;
+    }
+
+}
+@keyframes swipe-left{
+    0%{transform: translatex(-100%);}
 }
