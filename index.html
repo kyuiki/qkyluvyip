@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <!-- <meta http-equiv="refresh" content="2"> -->
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🐾 QkyLuvYip - Discord Attachment Fetcher</title>
+    <!-- <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <link href="style.css" rel="stylesheet">
+    <!-- <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script> -->
+    <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script>
+    <script src="script.js"></script>
+</head>
+<body>
+    <div class="main">
+        <div class="layout-main">
+            <div class="the-box-gui">
+                <div class="content">
+                    <h1>🐾 QkyLuvYip</h1>
+                    <p>View every attachment in every discord channels (By that, its mean, the servers that this bot join! You can suggest me a good nsfw server so i can add it to here xD)</p>
+                </div>
+                <hr/>
+                <div class="content">
+                    <h3>OwO Whats this?</h3>
+                    <p>This project was developed by Qky. I don't have any content on this site! Some content may be copyrighted to the authorities. Follow us for more FUN Project like this: D <a target="_blank" href="https://github.com/qkiemauln">View Github</a>. Also join our discord! <a target="_blank" href=https://discord.gg/j24UKsj>discord.gg/j24UKsj</a>. This project was classified as <b>HornyProjects</b></p>
+                </div>
+            </div>
+            <div class="the-box-gui">
+                <div class="content" id="vue-settingpanel">
+                    <h3>🔧 Settings...</h3>
+                    <!-- <p>Hmmm... Still Working on it. Last time we use cookie but now its act different. We will use LocalStorage instead</p> -->
+                    <label for="data-42012" class="def-custom" v-on:input="updateSetting()"><input id="data-42012" v-bind:checked="setting.forceCrop" v-on:click="updateSetting()" type="checkbox" v-model="setting.forceCrop" /> Force Crop To 300px<p>It will crop the picture into Square 300px, and its save alot of your internet comsumption (doesnt work with non-Discord url)</p></label>
+                </div>
+            </div>
+            <div class="the-box-gui sticky">
+                <div class="content" id="vue-channels">
+                    <h3>🔍 Find Channels...</h3>
+                    <input class="search-bar" v-model="filter" v-on:input="filterChannels()" placeholder="my-channel" />
+                    <button v-if="isNSFW" class="def-custom" v-on:click="toggleSFW()">Toggle SFW</button>
+                    <button v-else class="def-custom" v-on:click="toggleNSFW()">Toggle NSFW</button>
+                    <div class="channels-list">
+                        <list-channels v-for="channel in channels" v-bind:key="channel.id" v-bind:id="channel.id" v-bind:name="channel.name">Loading Lol</list-channels>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="layout-main" id="vue-posts">
+            <post-template v-for="post in posts" v-bind:key="post.id" v-bind:username="post.user" v-bind:caption="post.msg" v-bind:attach="post.link" v-bind:pfp="post.pfp" v-bind:type="post.type"><div style="padding:10px;text-align: center;" class="the-box-gui loading"><h3>Loading Data...</h3></div></post-template>
+        </div>
+        <div class="layout-main">
+            <div class="the-box-gui sticky">
+                <div class="content" id="vue-cdetails">
+                    <h3>📃 Channel Details</h3>
+                    <div>
+                        <span>Channel Name</span>
+                        <p>{{details.name}}</p>
+                    </div>
+                    <div>
+                        <span>Channel topic</span>
+                        <p>{{details.topic}}</p>
+                    </div>
+                    <div>
+                        <span>Total Fetched</span>
+                        <p>{{details.fetchedMessages}} Messages, {{totalAttachs}} Total Attachment</p>
+                    </div>
+                </div>
+                <hr/>
+                <div class="content">
+                    <h3>💖 Extras</h3>
+                    <button disabled class="def-custom">Get Server Invite</button>
+                    <button disabled class="def-custom">Download Entire Contents</button>
+                </div>
+            </div>
+        </div>
+        <!-- <div class="layout-main">
+            <div class="the-box-gui">Settings</div>
+            <div class="the-box-gui">Admin Panels</div>
+        </div> -->
+    </div>
+</body>
+</html>
