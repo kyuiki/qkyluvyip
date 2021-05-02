@@ -1,3 +1,8 @@
+:root{
+    --grad-1: rgba(112, 248, 94, 0.4);
+    --grad-2: rgba(95, 255, 95, 0.2);
+}
+
 body{
     margin:0;
     background: #0b0d1b;
@@ -81,6 +86,9 @@ hr{
     cursor: pointer;
     font-size: .8em;
 }
+.channels-list li span:last-child{
+    position: relative;
+}
 .channels-list li{
     padding: 7px 10px;
     border-bottom:1px solid rgb(255, 255, 255, 0.2);
@@ -124,7 +132,7 @@ hr{
     padding: 5px 8px;
     z-index: 999;
     position: absolute;
-    transform: translate(-10px, -10px);
+    transform: translate(-38px, 3px);
 }
 .content.post-box .attachment video.attachment-preview{
     box-sizing: border-box;
@@ -152,6 +160,28 @@ button.def-custom:disabled{
     background: rgba(124, 42, 42, 0.2);
     cursor:not-allowed
 }
+
+button.def-custom.green{
+    background:rgb(42, 190, 67)
+}
+button.def-custom.green:disabled{
+    color: #ffffff;
+    background-image: linear-gradient(45deg, var(--grad-1) 25%, var(--grad-2) 25%, var(--grad-2) 50%, var(--grad-1) 50%, var(--grad-1) 75%, var(--grad-2) 75%, var(--grad-2) 100%);
+    background-size: 56.57px 56.57px;
+    animation: .5s stripewalk linear infinite;
+    cursor:not-allowed
+}
+
+.the-badge{
+    background: #a31919;
+    border-radius: 5px;
+    padding: 5px 7px;
+    position: relative;
+    left: 9px;
+    float: right;
+    top: -4px;
+    font-size: 10px;
+}
 .flex{
     display:flex;
 }
@@ -163,6 +193,7 @@ button.def-custom:disabled{
     height: 60px;
     background: #172043;
     color: #ffffff;
+    box-shadow: 0 10px 20px rgba(9, 11, 16, 0.4);
 }
 .three-line{
     display: grid;
@@ -193,9 +224,9 @@ button.def-custom:disabled{
         height:calc( 100vh - 60px );
         top: 60px;
         background: rgba(20, 28, 46, 0.9);
-        -moz-backdrop-filter: blur(5px);
+        /* -moz-backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
-        backdrop-filter: blur(5px);
+        backdrop-filter: blur(5px); */
         animation:0.5s swipe-left;
         z-index:2;
     }
@@ -207,4 +238,8 @@ button.def-custom:disabled{
 }
 @keyframes swipe-left{
     0%{transform: translatex(-100%);}
+}
+@keyframes stripewalk{
+    0%{background-position: 0;}
+    100%{background-position: 56.57px;}
 }
