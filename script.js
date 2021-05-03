@@ -21,10 +21,10 @@ window.onload = async function() {
              topic:"Failed To Fetch Data from our Website! ＞︿＜",fetchedMessages:0
             },
         posts:[
-            {user:'Admin',msg:'Failed To Fetch Data from our Website (≧﹏ ≦). The website must been down or the Channel ID has Expired or something 😥',type:64}
+            {user:'Admin',msg:'Failed To Fetch Data from our Website (≧﹏ ≦). The website must been down or the Channel ID is invalid or something 😥',type:64}
         ]
     }
-    ,data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+gq("id"))
+    ,data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+encodeURIComponent( gq("id")))
     .then(function (a) {
         if(a.ok) return a.json()
         return noResponse
@@ -38,16 +38,17 @@ window.onload = async function() {
     var NoAttachment=[{user:'Admin',msg:'⁉ Looks like there is no Attachment in here. :<'}],
     formatCr = (localStorage.getItem('forceCrop')=="true")?'format=jpeg&width=300&height=300':'format=jpeg';
     Vue.component('post-template',{
-        props: ['username', 'pfp', 'caption', 'attach',"type"],
+        props: ['username', 'pfp', 'caption', 'attach',"type", "filename", "timestamp"],
         template:`
         <div v-bind:class="\`the-box-gui \${(type==64)?\'warning\':\'\'}\`">
             <div class="content post-box">
                 <div class="details">
                     <profilepict v-bind:url="pfp"></profilepict>
-                    <div class="captions"><p>Posted by @{{ username }}</p><h3>{{ caption }}</h3></div>
+                    <div class="captions"><p>Posted by <b>@{{ username }}</b> <timestamp v-bind:time="timestamp"></timestamp></p><h3>{{ caption }}</h3></div>
                 </div>
                 <pict-prev v-if="type==0||type==2" v-bind:istwo="type==2" v-bind:url="attach"></pict-prev>
                 <vid-prev v-if="type==1" v-bind:url="attach"></vid-prev>
+                <yt-prev v-if="type==3" v-bind:url="attach"></yt-prev>
                 <div class="extras">
                     <a><button v-on:click="downloadThat()" v-bind:disabled="!attach||type==3||download.isOTW" v-bind:class="\`def-custom \${(!download.isDone)?'':'green'}\`">❤ {{download.text}}</button></a>
                     <a><button v-on:click="reverseIt()" v-if="type==0" v-bind:disabled="!attach||ris.isDone" v-bind:class="\`def-custom \${(!ris.isDone)?'':''}\`">{{ris.text}}</button></a>
@@ -79,7 +80,7 @@ window.onload = async function() {
                 const a = document.createElement("a");
                 this.download = {text:"Downloading!",isOTW:true,isDone:true};
                 a.href = await curbYourFile(this.attach);
-                a.download = this.attach;
+                a.download = this.filename;
                 document.body.appendChild(a);
                 a.click();
                 document.body.removeChild(a);
@@ -106,9 +107,40 @@ window.onload = async function() {
         props: ['url'],
         template:'<img class="pfp" v-bind:src="url?url:\'https://cdn.discordapp.com/attachments/782957420473352262/837147406155251722/default-profile-picture1-744x744.png\'" />'
     })
+    Vue.component('timestamp',{
+        props: ['time'],
+        template:`<span class="timest"><span>{{dates}}</span> <span>{{times}}</span>
+        </span>
+        `,
+        data: function(){
+            const rt = new Date(this.time||70582791966000);
+            let [mo, da, ye] = rt.toLocaleDateString("en-US").split("/");
+            let [h, m, s] = rt.toLocaleTimeString("en-US").split(/:| /);
+            return{
+                dates:`${da}/${mo}/${ye}`,
+                times:`${h}:${m}`
+            }
+        }
+    })
     Vue.component('vid-prev',{
         props: ['url'],
         template:'<div class="attachment"><video class="attachment-preview" controls><source v-bind:src="url"/></video></div>'
+    })
+    Vue.component('yt-prev',{
+        props: ['url'],
+        template:`<div v-if="isOpen" class="youtube-embed"><iframe class="embed" v-bind:src="youtube"></iframe></div><button class="def-custom" v-else v-on:click="showIt()">▶ Open The Embed</button>`,
+        data: function(){
+            const getLast = gq("v", this.url)||this.url.match(/(youtu.be\/)([\w-]+)/)[2];
+            return {
+                youtube: "https://youtube.com/embed/"+getLast,
+                isOpen:false
+            }
+        },
+        methods:{
+            showIt:function(){
+                this.isOpen = true
+            }
+        }
     })
     Vue.component('pict-prev',{
         props: ['url', 'istwo'],
@@ -127,13 +159,7 @@ window.onload = async function() {
         }
     })
     console.log(data_post.posts.length)
-    const posts = new Vue({
-        el: '#vue-posts',
-        data: {
-            posts: (data_post.posts.length)?data_post.posts:NoAttachment
-        }
-    })
-    
+
     const channeldetails = new Vue({
         el: '#vue-cdetails',
         data: {
@@ -141,7 +167,34 @@ window.onload = async function() {
             totalAttachs: data_post.posts.length
         }
     })
-    
+
+    const posts = new Vue({
+        el: '#vue-posts',
+        data: {
+            NoAttachment,
+            posts: data_post,
+            isLoad: false
+        },
+        methods:{
+            loadMore: async function(){
+                // this.posts.posts.push({user:'Admin',msg:'Testing'})
+                this.isLoad = true
+                console.log("Updated", data_post.data.lastID)
+                const data_postl = await fetch(window.API_REQUEST_URL+'/api/attachment/'+encodeURIComponent(gq("id"))+`?before=${data_post.data.lastID||""}`)
+                .then(a => {
+                    if(a.ok) return a.json()
+                    return noResponse
+                })
+                .catch((error) => {console.log("error")});
+                data_postl.posts.forEach(m=>{this.posts.posts.push(m)})
+                this.posts.data.lastID = data_postl.data.lastID
+                channeldetails.details = data_postl.data
+                channeldetails.totalAttachs = data_postl.posts.length
+                this.isLoad = false
+            }
+        }
+    })
+
     Vue.component('list-channels',{
         props: ['channel','useless'],
         template:'<li v-if="(!channel.isUseless || !useless)" v-on:click="updateContents( channel.id )"><span v-if="channel.isSus" class="the-badge">NSFW!</span><span>{{channel.name}}</span></li>',
@@ -149,14 +202,14 @@ window.onload = async function() {
             updateContents: async function (id){
                 posts.posts = []
                 console.log("Updated")
-                data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+id)
+                data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+encodeURIComponent(id))
                 .then(a => {
                     if(a.ok) return a.json()
                     return noResponse
                 })
                 .catch((error) => {console.log("error")});
                 window.history.pushState({id}, `Channel ${id}`,`?id=${id}`);
-                posts.posts = (data_post.posts.length)?data_post.posts:NoAttachment
+                posts.posts = data_post
                 channeldetails.details = data_post.data
                 channeldetails.totalAttachs = data_post.posts.length
             },
@@ -222,7 +275,7 @@ window.onload = async function() {
                 //     return {data:{topic:"Failed To Fetch Data from our API!",fetchedMessages:0},posts:[{user:'Admin',msg:'Failed To Fetch Data from our API!'}]}
                 // })
                 // .catch((error) => {console.log("error")});
-                posts.posts = (data_post.posts.length)?data_post.posts:NoAttachment
+                posts.posts = data_post,
                 channeldetails.details = data_post.data
             }
         }
