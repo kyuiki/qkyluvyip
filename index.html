@@ -11,8 +11,8 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
     <link href="style.css" rel="stylesheet">
-    <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script>
-    <!-- <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script> -->
+    <!-- <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script> -->
+    <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script>
     <script src="script.js"></script>
 </head>
 <body>
@@ -60,7 +60,8 @@
             </div>
         </div>
         <div class="layout-main" id="vue-posts">
-            <post-template v-for="post in posts" v-bind:key="post.id" v-bind:username="post.user" v-bind:caption="post.msg" v-bind:attach="post.link" v-bind:pfp="post.pfp" v-bind:type="post.type"><div style="padding:10px;text-align: center;" class="the-box-gui loading"><h3>Loading Data...</h3></div></post-template>
+            <post-template v-for="post in (posts.posts.length)?posts.posts:NoAttachment" v-bind:key="post.id" v-bind:username="post.user" v-bind:filename="post.filename" v-bind:timestamp="post.timestamp" v-bind:caption="post.msg" v-bind:attach="post.link" v-bind:pfp="post.pfp" v-bind:type="post.type"><div style="padding:10px;text-align: center;" class="the-box-gui loading"><h3>Loading Data...</h3></div></post-template>
+            <div v-if="posts.data.fetchedMessages>99" style="padding:10px;text-align: center;" class="the-box-gui"><button v-bind:disabled="isLoad" v-on:click="loadMore()" class="def-custom" >➕ Load More...</h3></div>
         </div>
         <div class="layout-main">
             <div class="the-box-gui sticky">

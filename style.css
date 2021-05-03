@@ -171,7 +171,9 @@ button.def-custom.green:disabled{
     animation: .5s stripewalk linear infinite;
     cursor:not-allowed
 }
-
+.timest{
+    font-size:0.8em;
+}
 .the-badge{
     background: #a31919;
     border-radius: 5px;
@@ -204,6 +206,20 @@ button.def-custom.green:disabled{
 }
 .hide{
     display: none !important;
+}
+
+.youtube-embed {
+	position: relative;
+	width: 100%;
+	height: 0;
+	padding-bottom: 56.25%;
+}
+.youtube-embed .embed {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
+	height: 100%;
 }
 
 @media screen and (max-width:824px) {
