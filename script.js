@@ -64,7 +64,7 @@ window.onload = async function() {
                     isOTW: false
                 },
                 ris:{
-                    text:"🔃 Reverse-Search",
+                    text:"💦 Cumming soon",
                     isDone: false,
                     isOTW: false
                 },
@@ -98,8 +98,8 @@ window.onload = async function() {
                 this.copy = {text:"Link Copied!",isDone:true,isOTW:false};
             },
             reverseIt: async function(){
-                this.ris = {text:"❌ Didnt Finish Yet!",isOTW:true,isDone:true};
-                alert("Well. Somehow it will finish someday xD")
+                this.ris = {text:"❌ Did you came?",isOTW:true,isDone:true};
+                // alert("Well. Somehow it will finish someday xD")
             }
         }
     })
@@ -158,13 +158,19 @@ window.onload = async function() {
             }
         }
     })
-    console.log(data_post.posts.length)
+
 
     const channeldetails = new Vue({
         el: '#vue-cdetails',
         data: {
             details:data_post.data,
-            totalAttachs: data_post.posts.length
+            totalAttachs: data_post.posts.length,
+            totalData: { attachs:data_post.posts.length, messages: data_post.data.fetchedMessages }
+        },
+        methods:{
+            refresh:function(d){
+                Object.assign(this.$data, d)
+            }
         }
     })
 
@@ -188,16 +194,25 @@ window.onload = async function() {
                 .catch((error) => {console.log("error")});
                 data_postl.posts.forEach(m=>{this.posts.posts.push(m)})
                 this.posts.data.lastID = data_postl.data.lastID
-                channeldetails.details = data_postl.data
-                channeldetails.totalAttachs = data_postl.posts.length
+                channeldetails.refresh({
+                    details:data_postl.data,
+                    totalAttachs: data_postl.posts.length,
+                    totalData:{
+                        attachs : channeldetails.totalData.attachs + data_postl.posts.length,
+                        messages : channeldetails.totalData.messages + data_postl.data.fetchedMessages,
+                    }
+                })
                 this.isLoad = false
+            },
+            goTop: function(){
+                window.scrollTo({top: 0, behavior: 'smooth'});
             }
         }
     })
 
     Vue.component('list-channels',{
-        props: ['channel','useless'],
-        template:'<li v-if="(!channel.isUseless || !useless)" v-on:click="updateContents( channel.id )"><span v-if="channel.isSus" class="the-badge">NSFW!</span><span>{{channel.name}}</span></li>',
+        props: ['channel','useless', 'unsafe'],
+        template:'<li v-if="(!channel.isUseless || !useless) && !(channel.isSus && !unsafe)" v-on:click="updateContents( channel.id )"><span v-if="channel.isSus" class="the-badge">NSFW!</span><span>{{channel.name}}</span></li>',
         methods: {
             updateContents: async function (id){
                 posts.posts = []
@@ -210,8 +225,7 @@ window.onload = async function() {
                 .catch((error) => {console.log("error")});
                 window.history.pushState({id}, `Channel ${id}`,`?id=${id}`);
                 posts.posts = data_post
-                channeldetails.details = data_post.data
-                channeldetails.totalAttachs = data_post.posts.length
+                channeldetails.refresh({details:data_post.data,totalAttachs:data_post.posts.length,totalData:{messages:data_post.data.fetchedMessages,attachs:data_post.posts.length}})
             },
             // updateContent: function (id) {
             // this.name = id
@@ -229,6 +243,7 @@ window.onload = async function() {
             channels:data_guilds.channels.map(detectSus).map(detectUsC),
             filter:'',
             isNSFW:false,
+            safeMode: gq("safe"),
             setting:{
                 forceCrop: (localStorage.getItem('forceCrop')=="true"),
                 uselessCh: (localStorage.getItem('uselessCh')=="true")
@@ -283,16 +298,16 @@ window.onload = async function() {
     const navbar = new Vue({
         el: '#navbar',
         data:{
-            toggleExist: false
+            toggleExist: true
         },
         methods:{
             clickToExist: function(){
                 console.log("clicked")
-                Vue.nextTick(function(){
+                // Vue.nextTick(function(){
                 channels.isPhoneExist = this.toggleExist
                 this.toggleExist = !this.toggleExist
                 console.log(channels.isPhoneExist, this.toggleExist)
-                })
+                // })
             },
             clickToDevour: function(){
                 phoneMoment.isExist = false

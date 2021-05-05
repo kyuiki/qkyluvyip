@@ -9,7 +9,8 @@
     <meta property="og:title" content="🐾 QkyLuvYip - Discord Attachment Fetcher">
     <meta property="og:description" content="As the title said">
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script>
+    <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
+    <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
     <link href="style.css" rel="stylesheet">
     <script>window.API_REQUEST_URL = "https://qkyiff.herokuapp.com"</script>
     <!-- <script>window.API_REQUEST_URL = "http://192.168.100.27:3030"</script> -->
@@ -51,17 +52,21 @@
                     <input class="search-bar" v-model="filter" v-on:input="filterChannels()" placeholder="my-channel" />
                     <div>
                         <button v-if="isNSFW" class="def-custom" v-on:click="toggleSFW()">Toggle SFW</button>
-                        <button v-else class="def-custom" v-on:click="toggleNSFW()">Toggle NSFW</button>
+                        <button v-else-if="!isNSFW && !safeMode" class="def-custom" v-on:click="toggleNSFW()">Toggle NSFW</button>
+                        <span v-if="safeMode"><i>* Safe Mode is enabled!</i></span>
                     </div>
                     <div class="channels-list">
-                        <list-channels v-for="channel in channels" v-bind:useless="setting.uselessCh" v-bind:key="channel.id" v-bind:channel="channel">Loading Lol</list-channels>
+                        <list-channels v-for="channel in channels" v-bind:unsafe="!safeMode" v-bind:useless="setting.uselessCh" v-bind:key="channel.id" v-bind:channel="channel">Loading Lol</list-channels>
                     </div>
                 </div>
             </div>
         </div>
         <div class="layout-main" id="vue-posts">
             <post-template v-for="post in (posts.posts.length)?posts.posts:NoAttachment" v-bind:key="post.id" v-bind:username="post.user" v-bind:filename="post.filename" v-bind:timestamp="post.timestamp" v-bind:caption="post.msg" v-bind:attach="post.link" v-bind:pfp="post.pfp" v-bind:type="post.type"><div style="padding:10px;text-align: center;" class="the-box-gui loading"><h3>Loading Data...</h3></div></post-template>
-            <div v-if="posts.data.fetchedMessages>99" style="padding:10px;text-align: center;" class="the-box-gui"><button v-bind:disabled="isLoad" v-on:click="loadMore()" class="def-custom" >➕ Load More...</h3></div>
+            <div v-if="posts.data.fetchedMessages>99" style="padding:10px;text-align: center;" class="the-box-gui">
+                <button v-bind:disabled="isLoad" v-on:click="loadMore()" class="def-custom" >➕ Load More...</button>
+                <button v-on:click="goTop()" class="def-custom" >⏫ Go Up?</button>
+            </div>
         </div>
         <div class="layout-main">
             <div class="the-box-gui sticky">
@@ -76,8 +81,12 @@
                         <p>{{details.topic}}</p>
                     </div>
                     <div>
-                        <span>Total Fetched</span>
-                        <p>{{details.fetchedMessages}} Messages, {{totalAttachs}} Total Attachment</p>
+                        <span>Totals</span>
+                        <p>{{totalData.messages}} Messages, {{totalData.attachs}} Total Attachments</p>
+                    </div>
+                    <div>
+                        <span>Total Fetchs</span>
+                        <p>{{details.fetchedMessages}} Fetched Messages, {{totalAttachs}} Total Fetched Attachments</p>
                     </div>
                 </div>
                 <hr/>
