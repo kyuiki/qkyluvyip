@@ -8,6 +8,12 @@
     <title>🐾 QkyLuvYip - Discord Attachment Fetcher</title>
     <meta property="og:title" content="🐾 QkyLuvYip - Discord Attachment Fetcher">
     <meta property="og:description" content="As the title said">
+    <script>
+    // Please Use HTTPS :D
+    if (location.protocol !== 'https:' && !(location.protocol === "file:")) {
+        location.replace(`https:${location.href.substring(location.protocol.length)}`);
+    }
+    </script>
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.0.0/jquery.min.js"></script>
     <!-- <script src="https://cdn.jsdelivr.net/npm/vue@2/dist/vue.js"></script> -->
     <script src="https://cdn.jsdelivr.net/npm/vue@2.6.12"></script>
@@ -43,7 +49,8 @@
                     <h3>🔧 Settings...</h3>
                     <!-- <p>Hmmm... Still Working on it. Last time we use cookie but now its act different. We will use LocalStorage instead</p> -->
                     <label for="data-42012" class="def-custom"><input id="data-42012" v-bind:checked="setting.forceCrop" v-on:input="updateSetting('forceCrop')" type="checkbox" v-model="setting.forceCrop" /> Force Crop To 300px<p>It will crop the picture into Square 300px, and its save alot of your internet comsumption (doesnt work with non-Discord url)</p></label>
-                    <label for="data-42013" class="def-custom"><input id="data-42013" v-bind:checked="setting.uselessCh" v-on:input="updateSetting('uselessCh')" type="checkbox" v-model="setting.uselessCh"> Hide Unnecessary Channels<p>Hide all Unnecessary channels like example: Rules, Announcement, Chatting, Bot-channel, etc</p></label>
+                    <label for="data-42013" class="def-custom"><input id="data-42013" v-bind:checked="setting.uselessCh" v-on:input="updateSetting('uselessCh')" type="checkbox" v-model="setting.uselessCh" /> Hide Unnecessary Channels<p>Hide all Unnecessary channels like example: Rules, Announcement, Chatting, Bot-channel, etc</p></label>
+                    <label for="data-42014" class="def-custom"><input id="data-42014" v-bind:checked="setting.hideVideo" v-on:input="updateSetting('hideVideo')" type="checkbox" v-model="setting.hideVideo" /> Hide Video<p>Hide all video. Click to view the video (to save internet comsumption)</p></label>
                 </div>
             </div>
             <div class="the-box-gui sticky">
@@ -90,10 +97,11 @@
                     </div>
                 </div>
                 <hr/>
-                <div class="content">
+                <div class="content" id="extrase-retardation">
                     <h3>💖 Extras</h3>
                     <button disabled class="def-custom">Get Server Invite</button>
-                    <button disabled class="def-custom">Download Entire Contents</button>
+                    <button v-on:click="downloadAll();" class="def-custom">Send to Downloader</button>
+                    <button v-on:click="downloadJSON();" class="def-custom">Download as JSON</button>
                 </div>
             </div>
         </div>

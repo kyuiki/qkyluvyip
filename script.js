@@ -1,6 +1,5 @@
 
-
-window.onload = async function() {
+async function main (){
     function detectSus(b){const t = /(gay|solo|straight|lesbian|cunt|futa|lewd|hentai|yiff|sauce|nsfw|cum)/gi.test(b.name);b["isSus"] = t||b.isNsfw;
     return b
     }
@@ -37,6 +36,7 @@ window.onload = async function() {
     var data_guilds = await fetch(window.API_REQUEST_URL+'/api/channelslist').then(a => a.json()).catch(e=> {return {channels:[{id:"",name:"Cannot Fetch"}]}});
     var NoAttachment=[{user:'Admin',msg:'⁉ Looks like there is no Attachment in here. :<'}],
     formatCr = (localStorage.getItem('forceCrop')=="true")?'format=jpeg&width=300&height=300':'format=jpeg';
+
     Vue.component('post-template',{
         props: ['username', 'pfp', 'caption', 'attach',"type", "filename", "timestamp"],
         template:`
@@ -55,7 +55,7 @@ window.onload = async function() {
                     <button v-on:click="copyThis()" v-bind:disabled="!attach||copy.isOTW" v-bind:class="\`def-custom \${(!copy.isDone)?'':'green'}\`">📄 {{copy.text}}</button>
                 </div>
             </div>
-        </div>`,
+        </div>`, // type 0 img, 1 vid, 2 gif, 3 yt, >4 nonsense
         data:function(){
             return {
                 download:{
@@ -124,7 +124,17 @@ window.onload = async function() {
     })
     Vue.component('vid-prev',{
         props: ['url'],
-        template:'<div class="attachment"><video class="attachment-preview" controls><source v-bind:src="url"/></video></div>'
+        template:'<div v-if="isOpen" class="attachment"><video class="attachment-preview" controls><source v-bind:src="url"/></video></div><button class="def-custom" v-else v-on:click="showIt()">▶ Open The Video</button>',
+        data: function(){
+            return {
+                isOpen: !(localStorage.getItem("hideVideo")=="true")
+            }
+        },
+        methods:{
+            showIt:function(){
+                this.isOpen = true
+            }
+        }
     })
     Vue.component('yt-prev',{
         props: ['url'],
@@ -159,8 +169,9 @@ window.onload = async function() {
         }
     })
 
+    var posts, channeldetails, extras;
 
-    const channeldetails = new Vue({
+    channeldetails = new Vue({
         el: '#vue-cdetails',
         data: {
             details:data_post.data,
@@ -174,7 +185,7 @@ window.onload = async function() {
         }
     })
 
-    const posts = new Vue({
+    posts = new Vue({
         el: '#vue-posts',
         data: {
             NoAttachment,
@@ -246,7 +257,8 @@ window.onload = async function() {
             safeMode: gq("safe"),
             setting:{
                 forceCrop: (localStorage.getItem('forceCrop')=="true"),
-                uselessCh: (localStorage.getItem('uselessCh')=="true")
+                uselessCh: (localStorage.getItem('uselessCh')=="true"),
+                hideVideo: (localStorage.getItem('hideVideo')=="true")
             },
             isPhoneExist: !(window.innerWidth<500)
         },
@@ -284,6 +296,9 @@ window.onload = async function() {
                 if(this.setting.uselessCh!==(localStorage.getItem("uselessCh")=="true")) {
                     this.channels == await data_guilds.channels.map(detectSus).map(detectUsC)
                 }
+                if(this.setting.hideVideo!==(localStorage.getItem("hideVideo")=="true")) {
+                    console.log("I forgor 💀")
+                }
                 // await fetch(window.API_REQUEST_URL+'/api/attachment/'+gq("id"))
                 // .then(a => {
                 //     if(a.ok) return a.json()
@@ -314,5 +329,41 @@ window.onload = async function() {
             }
         }
     })
-};
-
+    extras = new Vue({
+        el: '#extrase-retardation',
+        methods:{
+            downloadAll: function(){
+                const getAll = posts.posts.posts;
+                const dataMapped = getAll.map(function(lol){
+                    if(lol.type>2) return {name:"invalid"};
+                    return {
+                        url : lol.link,
+                        name: lol.filename,
+                        id: lol.id
+                    }
+                })
+                console.table(dataMapped)
+            },
+            downloadJSON: function(){
+                const getAll = posts.posts.posts;
+                const dataMapped = getAll.map(function(lol){
+                    if(lol.type>2) return {name:"invalid"};
+                    return {
+                        url : lol.link,
+                        name: lol.filename,
+                        id: lol.id
+                    }
+                })
+                console.table(dataMapped)
+                var dataStr = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(dataMapped));
+                var dlAnchorElem = document.createElement("a");
+                document.body.appendChild(dlAnchorElem);
+                dlAnchorElem.setAttribute("href", dataStr);
+                dlAnchorElem.setAttribute("download", "qkyluvyip-attachmentdata.json");
+                dlAnchorElem.click();
+                document.body.removeChild(dlAnchorElem);
+            }
+        }
+    })
+}
+main();
