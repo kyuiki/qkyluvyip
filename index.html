@@ -26,9 +26,9 @@
         return Object.keys(p).map(k => `${encodeURIComponent(k)}=${encodeURIComponent(p[k])}`).join('&');}
     </script>
     <script>
-    // window.API_REQUEST_URL = gq("host")?`http://${gq("host")}` : "https://qkyiff.herokuapp.com"
+    window.API_REQUEST_URL = gq("host")?`http://${gq("host")}` : "https://qkyiff.herokuapp.com"
     </script>
-    <script>window.API_REQUEST_URL = "http://localhost:3031"</script>
+    <!-- <script>window.API_REQUEST_URL = "http://localhost:3031"</script> -->
     <script src="script.js"></script>
 </head>
 <body>
