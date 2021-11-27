@@ -1,11 +1,22 @@
+@import url('https://fonts.googleapis.com/css2?family=Ubuntu&display=swap');
+
 :root{
+    /* --bg-color: #0b0d1b;
+    --primary-color: #172043; */
+    --bg-color: #0c1115;
+    --primary-color: rgb(19, 37, 55);
+    --secondary-color: #1c2e43;
     --grad-1: rgba(112, 248, 94, 0.4);
     --grad-2: rgba(95, 255, 95, 0.2);
 }
 
+/* *{
+    border: 1px solid #00f !important;
+} */
+
 body{
     margin:0;
-    background: #0b0d1b;
+    background: var(--bg-color);
     font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
 }
 h1{
@@ -20,6 +31,12 @@ p{
 hr{
     border: 0.5px solid #313842;
 }
+img.emoji {
+    height: 1em;
+    width: 1em;
+    margin: 0 .05em 0 .1em;
+    vertical-align: -0.1em;
+}
 .main{
     display: grid;
     grid-template-columns: 2fr 4fr 2fr;
@@ -30,7 +47,7 @@ hr{
     padding: 5px 10px;
 }
 .the-box-gui{
-    background: #172043;
+    background: var(--primary-color);
     border-radius: 5px;
     color: #ffffff;
     box-shadow: 1px 1px 5px rgba(29, 41, 67, 0.4);
@@ -45,17 +62,25 @@ hr{
     /* background: linear-gradient(45deg, #172043, #374063, #172043); */
     animation: a 2s infinite;
 }
-@keyframes a{
-    0%, 100%{
-    }
-    50% {
-        background:#9a9fb9;
-    }
-}
 
 .sticky{
     position: sticky;
     top:5px;
+}
+input[type="date"]{
+    color: #fff;
+    text-shadow: 0 0 5px #ffffff;
+}
+input[type="date"]::-webkit-calendar-picker-indicator {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    width: auto;
+    height: auto;
+    color: transparent;
+    background: transparent;
 }
 .content{
     padding: 3px 15px;
@@ -72,6 +97,21 @@ hr{
     outline: none;
     color: #ffffff;
     font-size: .95em;
+}
+.changelog-domain {
+    border-radius: 10px;
+    margin-top: 20px;
+    overflow: auto;
+    word-break:normal;
+    background-color: rgba(0, 0, 0, 0.392);
+    padding: 10px 25px;
+}
+.changelog-domain pre{
+    font-size: 1.2 em;
+    font-family: Ubuntu;
+    white-space: pre-wrap;
+    line-height: 1.5em;
+    word-wrap: break-word;
 }
 .channels-list{
     list-style-type: none;
@@ -124,6 +164,7 @@ hr{
     max-width:100%;
     max-height:500px;
     border-radius: 5px;
+    animation: a 2s infinite;
 }
 .content.post-box .attachment .gif-badge{
     background: rgba(20, 28, 46, 0.9);
@@ -139,6 +180,7 @@ hr{
     max-width:100%;
     max-height:500px;
     border-radius: 5px;
+    animation: a 2s infinite;
 }
 .content.post-box .extras{
     margin: 10px 0;
@@ -193,7 +235,7 @@ button.def-custom.green:disabled{
     top: 0px;
     width:100%;
     height: 60px;
-    background: #172043;
+    background: var(--primary-color);
     color: #ffffff;
     box-shadow: 0 10px 20px rgba(9, 11, 16, 0.4);
 }
@@ -239,7 +281,7 @@ button.def-custom.green:disabled{
         position: fixed;
         height:calc( 100vh - 60px );
         top: 60px;
-        background: rgba(20, 28, 46, 0.9);
+        background: var(--secondary-color);
         /* -moz-backdrop-filter: blur(5px);
         -webkit-backdrop-filter: blur(5px);
         backdrop-filter: blur(5px); */
@@ -258,4 +300,11 @@ button.def-custom.green:disabled{
 @keyframes stripewalk{
     0%{background-position: 0;}
     100%{background-position: 56.57px;}
+}
+@keyframes a{
+    0%, 100%{
+    }
+    50% {
+        background:#b4c0ff99;
+    }
 }

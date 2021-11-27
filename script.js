@@ -1,9 +1,10 @@
 
 async function main (){
+    var dateBased = "";
     function detectSus(b){const t = /(gay|solo|straight|lesbian|cunt|futa|lewd|hentai|yiff|sauce|nsfw|cum)/gi.test(b.name);b["isSus"] = t||b.isNsfw;
     return b
     }
-    function detectUsC(b){const t = /(rules|announ|vc|bot|log|general|chat|command|suggest|info|guide)/gi.test(b.name);b["isUseless"] = t;
+    function detectUsC(b){const t = /(rules|announ|vc|bot|log|general|chat|command|suggest|info|guide|role|talk|welcome|report|voting|support|faq|appli|boost|server|count|read|update|bump|verify|links|service|discus|help)/gi.test(b.name);b["isUseless"] = t;
     return b
     }
     async function curbYourFile(url) {
@@ -34,7 +35,7 @@ async function main (){
         }
     );
     var data_guilds = await fetch(window.API_REQUEST_URL+'/api/channelslist').then(a => a.json()).catch(e=> {return {channels:[{id:"",name:"Cannot Fetch"}]}});
-    var NoAttachment=[{user:'Admin',msg:'⁉ Looks like there is no Attachment in here. :<'}],
+    var NoAttachment=[{user:'Admin',msg:'⁉ Looks like there is no Attachment in here. :<',type:64}],
     formatCr = (localStorage.getItem('forceCrop')=="true")?'format=jpeg&width=300&height=300':'format=jpeg';
 
     Vue.component('post-template',{
@@ -49,7 +50,9 @@ async function main (){
                 <pict-prev v-if="type==0||type==2" v-bind:istwo="type==2" v-bind:url="attach"></pict-prev>
                 <vid-prev v-if="type==1" v-bind:url="attach"></vid-prev>
                 <yt-prev v-if="type==3" v-bind:url="attach"></yt-prev>
+                <div  v-if="type==128" class="changelog-domain"><pre>{{attach}}</pre></div>
                 <div class="extras">
+                    
                     <a><button v-on:click="downloadThat()" v-bind:disabled="!attach||type==3||download.isOTW" v-bind:class="\`def-custom \${(!download.isDone)?'':'green'}\`">❤ {{download.text}}</button></a>
                     <a><button v-on:click="reverseIt()" v-if="type==0" v-bind:disabled="!attach||ris.isDone" v-bind:class="\`def-custom \${(!ris.isDone)?'':''}\`">{{ris.text}}</button></a>
                     <button v-on:click="copyThis()" v-bind:disabled="!attach||copy.isOTW" v-bind:class="\`def-custom \${(!copy.isDone)?'':'green'}\`">📄 {{copy.text}}</button>
@@ -64,7 +67,7 @@ async function main (){
                     isOTW: false
                 },
                 ris:{
-                    text:"💦 Cumming soon",
+                    text:"🔍 Rev Image Search",
                     isDone: false,
                     isOTW: false
                 },
@@ -98,14 +101,15 @@ async function main (){
                 this.copy = {text:"Link Copied!",isDone:true,isOTW:false};
             },
             reverseIt: async function(){
-                this.ris = {text:"❌ Did you came?",isOTW:true,isDone:true};
+                this.ris = {text:"✨ Opened in newtab",isOTW:true,isDone:true};
+                window.open(`https://saucenao.com/search.php?url=${this.attach}`,Math.random(), "height=600,width=800,scrollbars=1,location=no,menubar=no,resizable=1,status=no,toolbar=no")
                 // alert("Well. Somehow it will finish someday xD")
             }
         }
     })
     Vue.component('profilepict',{
         props: ['url'],
-        template:'<img class="pfp" v-bind:src="url?url:\'https://cdn.discordapp.com/attachments/782957420473352262/837147406155251722/default-profile-picture1-744x744.png\'" />'
+        template:'<img class="pfp" v-bind:src="!url.includes(\'null\')?url:\'https://cdn.discordapp.com/attachments/782957420473352262/837147406155251722/default-profile-picture1-744x744.png\'" />'
     })
     Vue.component('timestamp',{
         props: ['time'],
@@ -124,7 +128,7 @@ async function main (){
     })
     Vue.component('vid-prev',{
         props: ['url'],
-        template:'<div v-if="isOpen" class="attachment"><video class="attachment-preview" controls><source v-bind:src="url"/></video></div><button class="def-custom" v-else v-on:click="showIt()">▶ Open The Video</button>',
+        template:'<div v-if="isOpen" v-bind:poster="url+`?format=jpeg`" class="attachment"><v-lazy><video class="attachment-preview" controls><source v-bind:poster="url+\'?format=jpeg\'" v-bind:src="url"/></video></v-lazy></div><button class="def-custom" v-else v-on:click="showIt()">▶ Open The Video</button>',
         data: function(){
             return {
                 isOpen: !(localStorage.getItem("hideVideo")=="true")
@@ -154,7 +158,7 @@ async function main (){
     })
     Vue.component('pict-prev',{
         props: ['url', 'istwo'],
-        template:'<div class="attachment"><img class="attachment-preview" v-on:click="updatePicture( url )" v-bind:src=lighturl><span v-if="istwo" class="gif-badge">GIF</span></div>',
+        template:'<div class="attachment"><v-lazy><img class="attachment-preview" v-on:click="updatePicture( url )" v-bind:src=lighturl><span v-if="istwo" class="gif-badge">GIF</span></v-lazy></div>',
         data: function(){
             var lighturl =this.url;
             lighturl += lighturl.match(/\?/)?'&'+formatCr:'?'+formatCr
@@ -187,6 +191,7 @@ async function main (){
 
     posts = new Vue({
         el: '#vue-posts',
+        vuetify: new Vuetify(),
         data: {
             NoAttachment,
             posts: data_post,
@@ -223,20 +228,44 @@ async function main (){
 
     Vue.component('list-channels',{
         props: ['channel','useless', 'unsafe'],
-        template:'<li v-if="(!channel.isUseless || !useless) && !(channel.isSus && !unsafe)" v-on:click="updateContents( channel.id )"><span v-if="channel.isSus" class="the-badge">NSFW!</span><span>{{channel.name}}</span></li>',
+        vuetify: new Vuetify(),
+        template:`
+        <li v-bind:title="channel.guildName" v-bind:style="\`border-left: 10px solid \${channel.col};background: linear-gradient(90deg,\${channel.col}50,transparent)\`" v-if="(!channel.isUseless || !useless) && !(channel.isSus && !unsafe)" v-on:click="updateContents( channel.id )">
+            <span v-if="channel.isSus" class="the-badge">NSFW!</span>
+            <span>{{channel.name}}</span>
+        </li>
+        `,
         methods: {
             updateContents: async function (id){
-                posts.posts = []
+                posts.posts = {
+                    data:{
+                         topic:"Loading...",fetchedMessages:"Loading"
+                        },
+                    posts:[
+                        {user:'Admin',msg:'Please wait while loading...',type:64}
+                    ]
+                }
+                window.scrollTo({top: 0, behavior: 'smooth'});
                 console.log("Updated")
-                data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+encodeURIComponent(id))
+                data_post = await fetch(window.API_REQUEST_URL+'/api/attachment/'+encodeURIComponent(id)+'?'+pq({before:dateBased}))
                 .then(a => {
                     if(a.ok) return a.json()
                     return noResponse
                 })
-                .catch((error) => {console.log("error")});
+                .catch((error) => {
+                    console.log("error")
+                    posts.posts = {
+                        data:{
+                             topic:"Loading...",fetchedMessages:"Loading"
+                            },
+                        posts:[
+                            {user:'Admin',msg:'🔌 Failed! Please check your internet connection or the website! is it down?',type:64}
+                        ]
+                    }
+                });
                 window.history.pushState({id}, `Channel ${id}`,`?id=${id}`);
                 posts.posts = data_post
-                channeldetails.refresh({details:data_post.data,totalAttachs:data_post.posts.length,totalData:{messages:data_post.data.fetchedMessages,attachs:data_post.posts.length}})
+                channeldetails.refresh({details:data_post.data,totalAttachs:data_post.posts.length,totalData:{messages:data_post.data.fetchedMessages,attachs:data_post.posts.length}});
             },
             // updateContent: function (id) {
             // this.name = id
@@ -250,6 +279,7 @@ async function main (){
 
     const channels = new Vue({
         el: '#the-main-nav',
+        vuetify: new Vuetify(),
         data: {
             channels:data_guilds.channels.map(detectSus).map(detectUsC),
             filter:'',
@@ -265,16 +295,16 @@ async function main (){
         methods:{
             filterChannels: function(){
                 var filter = data_guilds.channels;
-                this.channels = filter.filter(m => m.name.includes(this.filter.toLowerCase()));
+                this.channels = filter.filter(m => {return m.name.includes(this.filter.toLowerCase())||m.guildName.toLowerCase().includes(this.filter.toLowerCase())});
             },
             toggleNSFW: async function(){
-                data_guilds = await fetch(window.API_REQUEST_URL+'/api/channelslist?nsfw').then(a => a.json());
-                this.channels = data_guilds.channels.map(detectSus)
+                data_guilds = await fetch(window.API_REQUEST_URL+'/api/channelslist?'+pq({nsfw:"1"})).then(a => a.json());
+                this.channels = data_guilds.channels.map(detectSus).map(detectUsC)
                 this.isNSFW = true
             },
             toggleSFW: async function(){
                 data_guilds = await fetch(window.API_REQUEST_URL+'/api/channelslist').then(a => a.json());
-                this.channels = data_guilds.channels.map(detectSus);
+                this.channels = data_guilds.channels.map(detectSus).map(detectUsC);
                 this.isNSFW = false
             },
             fullscreenGoesBrr: function() {
@@ -312,6 +342,7 @@ async function main (){
     })
     const navbar = new Vue({
         el: '#navbar',
+        vuetify: new Vuetify(),
         data:{
             toggleExist: true
         },
@@ -331,7 +362,17 @@ async function main (){
     })
     extras = new Vue({
         el: '#extrase-retardation',
+        vuetify: new Vuetify(),
+        data:{
+            dateBased:'',
+            dateBasedSnowflake:''
+        },
         methods:{
+            changeVariable: async function(){
+                dateBased = await fetch("https://integertranslation.qkiemauln.repl.co/snowflake?ts="+new Date(this.dateBased).getTime()).then(a => a.text());
+                this.dateBasedSnowflake = dateBased;
+                console.log(dateBased)
+            },
             downloadAll: function(){
                 const getAll = posts.posts.posts;
                 const dataMapped = getAll.map(function(lol){
@@ -342,7 +383,9 @@ async function main (){
                         id: lol.id
                     }
                 })
-                console.table(dataMapped)
+                prompt("Domain URL to Attachment Sorter... (Default is localhost:8080)")
+                alert("Its not finished yet!")
+                // console.table(dataMapped)
             },
             downloadJSON: function(){
                 const getAll = posts.posts.posts;
