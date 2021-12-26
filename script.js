@@ -383,20 +383,18 @@ async function main (){
                         id: lol.id
                     }
                 })
-                const theDownloaderPath = prompt("Domain URL to Downloader... (Default is localhost:8080), POST the JSON")
-                (async () => {
-                    const rawResponse = await fetch(theDownloaderPath, {
-                      method: 'POST',
-                      headers: {
-                        'Accept': 'application/json',
-                        'Content-Type': 'application/json'
-                      },
-                      body: JSON.stringify(dataMapped)
-                    });
-                    const { content } = await rawResponse.json();
-                  
-                    alert(content);
-                  })();
+                const theDownloaderPath = prompt("Domain URL to Downloader... (Default is localhost:8080), POST the JSON");
+                const rawResponse = await fetch(theDownloaderPath, {
+                    method: 'POST',
+                    headers: {
+                    'Accept': 'application/json',
+                    'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(dataMapped)
+                });
+                const { content } = await rawResponse.json();
+                
+                alert(content);
                 // console.table(dataMapped)
             },
             downloadJSON: function(){
