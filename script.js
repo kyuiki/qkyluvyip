@@ -369,8 +369,8 @@ async function main (){
         },
         methods:{
             changeVariable: async function(){
-                dateBased = await fetch("https://integertranslation.qkiemauln.repl.co/snowflake?ts="+new Date(this.dateBased).getTime()).then(a => a.text());
-                this.dateBasedSnowflake = dateBased;
+                dateBased = new Date(this.dateBased);
+                this.dateBasedSnowflake = (dateBased.valueOf() - 1420070400000) * 2**22;
                 console.log(dateBased)
             },
             downloadAll: function(){
@@ -383,8 +383,20 @@ async function main (){
                         id: lol.id
                     }
                 })
-                prompt("Domain URL to Attachment Sorter... (Default is localhost:8080)")
-                alert("Its not finished yet!")
+                const theDownloaderPath = prompt("Domain URL to Downloader... (Default is localhost:8080), POST the JSON")
+                (async () => {
+                    const rawResponse = await fetch(theDownloaderPath, {
+                      method: 'POST',
+                      headers: {
+                        'Accept': 'application/json',
+                        'Content-Type': 'application/json'
+                      },
+                      body: JSON.stringify(dataMapped)
+                    });
+                    const { content } = await rawResponse.json();
+                  
+                    alert(content);
+                  })();
                 // console.table(dataMapped)
             },
             downloadJSON: function(){
