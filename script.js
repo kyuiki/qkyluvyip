@@ -373,7 +373,7 @@ async function main (){
                 this.dateBasedSnowflake = dateBased;
                 console.log(dateBased)
             },
-            downloadAll: function(){
+            downloadAll: async function(){
                 const getAll = posts.posts.posts;
                 const dataMapped = getAll.map(function(lol){
                     if(lol.type>2) return {name:"invalid"};
