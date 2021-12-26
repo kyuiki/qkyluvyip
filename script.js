@@ -369,8 +369,8 @@ async function main (){
         },
         methods:{
             changeVariable: async function(){
-                dateBased = new Date(this.dateBased);
-                this.dateBasedSnowflake = (dateBased.valueOf() - 1420070400000) * 2**22;
+                dateBased = (new Date(this.dateBased).valueOf() - 1420070400000) * 2**22;
+                this.dateBasedSnowflake = dateBased;
                 console.log(dateBased)
             },
             downloadAll: function(){
